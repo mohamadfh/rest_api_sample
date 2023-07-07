@@ -6,7 +6,9 @@ const userSchema = new Schema({
     lastName: String,
     email: String,
     password: String,
-    permissionLevel: Number
+    permissionLevel: Number,
+    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+
 });
 
 userSchema.virtual('id').get(function () {
@@ -76,3 +78,15 @@ exports.removeById = (userId) => {
     });
 };
 
+exports.addFriend = (userId, friendId) => {
+    return User.findByIdAndUpdate(
+        userId,
+        { $push: { friends: friendId } },
+    );
+};
+exports.removeFriend =  (userId, friendId) => {
+    return User.findByIdAndUpdate(
+        userId,
+        { $pull: { friends: friendId } },
+    );
+};

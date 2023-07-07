@@ -53,3 +53,40 @@ exports.removeById = (req, res) => {
             res.status(204).send({});
         });
 };
+
+
+
+exports.addFriend = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { friendId } = req.body;
+
+        const updatedUser = await UserModel.addFriend(userId, friendId);
+
+        if (!updatedUser) {
+            return res.status(404).json({});
+        }
+
+        res.status(200).json({});
+    } catch (error) {
+        res.status(500).json({});
+    }
+};
+
+
+exports.removeFriend = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { friendId } = req.body;
+
+        const updatedUser = await UserModel.removeFriend(userId, friendId);
+
+        if (!updatedUser) {
+            return res.status(404).json({});
+        }
+
+        res.status(200).json({});
+    } catch (error) {
+        res.status(500).json({});
+    }
+};
