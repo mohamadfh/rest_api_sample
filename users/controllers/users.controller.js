@@ -14,6 +14,7 @@ exports.insert = (req, res) => {
 
 exports.list = (req, res) => {
     let limit = req.query.limit && req.query.limit <= 100 ? parseInt(req.query.limit) : 10;
+    let showfriends = req.query.showfriends;
     let page = 0;
     if (req.query) {
         if (req.query.page) {
@@ -21,14 +22,15 @@ exports.list = (req, res) => {
             page = Number.isInteger(req.query.page) ? req.query.page : 0;
         }
     }
-    UserModel.list(limit, page)
+    UserModel.list(limit, page,showfriends)
         .then((result) => {
             res.status(200).send(result);
         })
 };
 
 exports.getById = (req, res) => {
-    UserModel.findById(req.params.userId)
+    let showfriends = req.query.showfriends;
+    UserModel.findById(req.params.userId,showfriends)
         .then((result) => {
             res.status(200).send(result);
         });

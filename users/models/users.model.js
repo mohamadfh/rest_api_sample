@@ -7,7 +7,7 @@ const userSchema = new Schema({
     email: String,
     password: String,
     permissionLevel: Number,
-    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    friends: [{ type: Schema.Types.ObjectId, ref: 'Users' }]
 
 });
 
@@ -30,12 +30,15 @@ const User = mongoose.model('Users', userSchema);
 exports.findByEmail = (email) => {
     return User.find({email: email});
 };
-exports.findById = (id) => {
-    return User.findById(id)
+exports.findById = (id,showfriends) => {
+    return User.findById(id).populate('friends')
         .then((result) => {
             result = result.toJSON();
             delete result._id;
             delete result.__v;
+            if(showfriends !== 'true'){
+                delete result.friends;
+            }
             return result;
         });
 };
@@ -45,15 +48,21 @@ exports.createUser = (userData) => {
     return user.save();
 };
 
-exports.list = (perPage, page) => {
+exports.list = (perPage, page,showfriends) => {
     return new Promise((resolve, reject) => {
-        User.find()
+        User.find().populate('friends')
             .limit(perPage)
             .skip(perPage * page)
             .exec(function (err, users) {
                 if (err) {
                     reject(err);
                 } else {
+
+                    if(showfriends !== 'true') {
+                        users.forEach(function(v){
+                            v.friends = undefined;
+                            });
+                    }
                     resolve(users);
                 }
             })
